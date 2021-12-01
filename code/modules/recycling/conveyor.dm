@@ -24,7 +24,7 @@ GLOBAL_LIST_EMPTY(conveyors_by_id)
 
 /obj/machinery/conveyor/inverted //Directions inverted so you can use different corner pieces.
 	icon_state = "conveyor_map_inverted"
-	verted = -1
+	flipped = TRUE // SKYRAT EDIT - Prettier conveyors - ORIGINAL: verted = -1
 
 /obj/machinery/conveyor/inverted/Initialize(mapload)
 	. = ..()
@@ -103,6 +103,12 @@ GLOBAL_LIST_EMPTY(conveyors_by_id)
 		var/temp = forwards
 		forwards = backwards
 		backwards = temp
+	// SKYRAT EDIT START - Prettier conveyors
+	if(flipped)
+		var/temp = forwards
+		forwards = backwards
+		backwards = temp
+	// SKYRAT EDIT END
 	if(operating == 1)
 		movedir = forwards
 	else
@@ -110,7 +116,7 @@ GLOBAL_LIST_EMPTY(conveyors_by_id)
 	update()
 
 /obj/machinery/conveyor/update_icon_state()
-	icon_state = "[base_icon_state][(machine_stat & BROKEN) ? "-broken" : (operating * verted)]"
+	icon_state = "[base_icon_state][(machine_stat & BROKEN) ? "-broken" : (operating * verted)][flipped ? "-flipped" : ""]" // SKYRAT EDIT - Prettier conveyors - ORIGINAL: icon_state = "[base_icon_state][(machine_stat & BROKEN) ? "-broken" : (operating * verted)]"
 	return ..()
 
 /obj/machinery/conveyor/proc/update()
@@ -118,6 +124,7 @@ GLOBAL_LIST_EMPTY(conveyors_by_id)
 		operating = FALSE
 		update_appearance()
 		return FALSE
+	update_appearance() // SKYRAT EDIT ADDITION - Prettier conveyors
 	return TRUE
 
 // machine process
@@ -181,7 +188,9 @@ GLOBAL_LIST_EMPTY(conveyors_by_id)
 		if(!(machine_stat & BROKEN))
 			I.play_tool_sound(src)
 			setDir(turn(dir,-45))
+			/* SKYRAT EDIT REMOVAL START - Prettier Conveyors
 			update_move_direction()
+			*/ // SKYRAT EDIT END
 			to_chat(user, span_notice("You rotate [src]."))
 
 	else if(I.tool_behaviour == TOOL_SCREWDRIVER)
